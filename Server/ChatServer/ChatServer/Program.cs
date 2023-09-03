@@ -49,7 +49,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 //config dbcontext
 builder.Services.AddDbContext<ChatAPPContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("ChatAPP")));
+    options.UseSqlServer(configuration.GetConnectionString("DatabaseAWS")));
 
 //config kafka
 builder.Services.AddHostedService<ConsumerService>();
