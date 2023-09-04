@@ -6,6 +6,7 @@ using ChatServer.Models.PostModels;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -33,12 +34,12 @@ public class ChannelServices
     {
         try
         {
-            model.Name = model.Name + "." + Guid.NewGuid();
+            var topic = Guid.NewGuid().ToString();
             await _adminClientBuilder.Build().CreateTopicsAsync(new List<TopicSpecification>
             {
                 new TopicSpecification
                 {
-                    Name = model.Name,
+                    Name = topic,
                     NumPartitions = 1,
                     ReplicationFactor = 1,
                 }
@@ -46,7 +47,7 @@ public class ChannelServices
 
             var message = new Message
             {
-                Content = "Welcome to " + model.Name?.Split('.')[0] + " channel",
+                Content = "Welcome to " + model.Name + " channel",
                 SenderStatus = SenderStatusEnum.Sent.ToString(),
                 SendTime = DateTime.Now,
                 Type = MessageTypeEnum.Text.ToString(),
@@ -59,11 +60,12 @@ public class ChannelServices
                 {
                     message
                 },
+                Topic = topic
             };
 
             _context.Channels.Add(channel);
             _context.SaveChanges();
-
+            model.AssignMember.Add(model.UserId);
             var assginUser = _context.Users.Where(c => model.AssignMember.Contains(c.Id)).ToList();
             var user = _context.Users.Where(c => c.Id == model.UserId).FirstOrDefault();
             var notifications = new List<Notification>();
@@ -90,6 +92,11 @@ public class ChannelServices
                 };
                 channelMemberships.Add(channelMembership);
             }
+            channelMemberships.Add(new ChannelMembership
+            {
+                UserId = model.UserId,
+                Channel = channel
+            });
 
             _context.ChannelMemberships.AddRange(channelMemberships);
             _context.SaveChanges();
@@ -98,8 +105,6 @@ public class ChannelServices
                 .Include(c => c.ChannelMemberships)
                 .Where(c => c.Id == channel.Id)
                 .ToList();
-
-            var messageJson = JsonSerializer.Serialize(message);
             await _chatHub.SendMessage(message);
 
             return new DefaultResponse { Message = "Create channel success", Data = result };
@@ -140,7 +145,8 @@ public class ChannelServices
             {
                 return new DefaultResponse { Message = "Channel not found" };
             }
-            _context.Channels.Remove(channel);
+            _adminClientBuilder.Build().DeleteTopicsAsync(new List<string> { channel?.Topic! }).GetAwaiter().GetResult();
+            _context.Channels.Remove(channel!);
             _context.SaveChanges();
             return new DefaultResponse { Message = "Delete channel success" };
         }
@@ -184,11 +190,7 @@ public class ChannelServices
                 ReceiverStatus = message.ReceiverStatus,
                 Channel = channel
             };
-            var options = new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.Preserve
-            };
-            var messageJson = JsonSerializer.Serialize(result, options);
+
 			await _chatHub.SendMessage(result);
 
             return new DefaultResponse { Message = "Send message success", Data = result };
@@ -233,21 +235,36 @@ public class ChannelServices
         }
     }
 
-    public DefaultResponse GetChannelMessages(int id)
+    public List<Message>? GetChannelMessages(int id, int userId)
     {
         try
         {
             var messages = _context.Messages.Where(x => x.ChannelId == id).ToList();
             if (messages == null)
             {
-                return new DefaultResponse { Message = "Channel not found" };
+                return null;
             }
-            return new DefaultResponse { Message = "Get channel messages success", Data = messages };
+
+            var messageIds = messages.Select(x => x.Id).ToList();
+            var notifications = _context.Notifications.Where(x => messageIds.Contains(x.MessageId!.Value) && x.UserId == userId).ToList();
+            foreach (var item in notifications)
+            {
+                item.IsRead = true;
+            }
+            var messageByUser = _context.Messages.Where(x => x.UserId == userId && x.ChannelId == id).ToList();
+            foreach (var item in messageByUser)
+            {
+                item.ReceiverStatus = ReceiverStatusEnum.Received.ToString();
+            }
+            _context.Messages.UpdateRange(messageByUser);
+            _context.SaveChanges();
+
+            return messages;
         }
         catch (Exception e)
         {
             _logger.LogError(e.Message);
-            return new DefaultResponse { Message = "Get channel messages failed" };
+            return null;
         }
     }
 }

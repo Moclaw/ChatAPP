@@ -30,10 +30,13 @@ namespace ChatServer.Hubs
                 await _clients.Clients.All.SendAsync("ReceiveMessage", message);
                 using var producer = new ProducerBuilder<Null, string>(_producerConfig)
                     .Build();
-
-                var result = await producer.ProduceAsync(message?.Channel?.Name, new Message<Null, string>
+                string json = JsonConvert.SerializeObject(message, Formatting.Indented, new JsonSerializerSettings
                 {
-                    Value = JsonConvert.SerializeObject(message)
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+                var result = await producer.ProduceAsync(message?.Channel?.Topic, new Message<Null, string>
+                {
+                    Value = json
                 });
             }
             catch (Exception e)

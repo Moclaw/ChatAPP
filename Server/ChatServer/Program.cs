@@ -45,7 +45,7 @@ builder.Services.AddSwaggerGen(setup =>
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 //config dbcontext
 builder.Services.AddDbContext<ChatAPPContext>(options =>

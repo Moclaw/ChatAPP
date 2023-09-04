@@ -13,6 +13,7 @@ namespace ChatServer.Models.Entities
 
         public int Id { get; set; }
         public string? Name { get; set; }
+        public string? Topic { get; set; }
 
 		[Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<ChannelMembership> ChannelMemberships { get; set; }

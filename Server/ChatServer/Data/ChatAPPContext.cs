@@ -28,7 +28,7 @@ namespace ChatServer.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:ChatAPP");
+                optionsBuilder.UseSqlServer("Name=ConnectionStrings:DatabaseAWS");
             }
         }
 

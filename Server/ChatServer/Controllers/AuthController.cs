@@ -19,6 +19,9 @@ namespace ChatServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public ActionResult Login(LoginPostModel model)
         {
             try
@@ -28,6 +31,7 @@ namespace ChatServer.Controllers
                 {
                     return BadRequest(new DefaultResponse { Message = result.Message });
                 }
+
                 return Ok(new DefaultResponse { Message = result.Message, Data = result.Data });
             }
             catch (Exception e)
@@ -38,6 +42,9 @@ namespace ChatServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public ActionResult Register(RegisterPostModel model)
         {
             var result = _userServices.Register(model);
@@ -50,6 +57,9 @@ namespace ChatServer.Controllers
 
         [HttpGet]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public ActionResult GetProfile()
         {
 
