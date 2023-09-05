@@ -1,0 +1,33 @@
+<div class="auth-container" [@formAnimation]="currentState">
+  <form [formGroup]="loginForm" *ngIf="currentState === 'login'" (ngSubmit)="onLoginSubmit()">
+    <h2>Login</h2>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" formControlName="username" id="username" placeholder="Enter username">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" formControlName="password" id="password" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+    <p>Don't have an account? <a href="#" (click)="toggleForm('register')">Register</a></p>
+  </form>
+
+  <form [formGroup]="registerForm" *ngIf="currentState === 'register'" (ngSubmit)="onRegisterSubmit()">
+    <h2>Register</h2>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" formControlName="username" id="reg-username" placeholder="Enter username">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" formControlName="password" id="reg-password" placeholder="Password">
+    </div>
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" class="form-control" formControlName="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+    <p>Already have an account? <a href="#" (click)="toggleForm('login')">Login</a></p>
+  </form>
+</div>
