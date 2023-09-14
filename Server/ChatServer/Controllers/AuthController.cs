@@ -12,6 +12,7 @@ namespace ChatServer.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserServices _userServices;
+
         public AuthController(UserServices userServices)
         {
             _userServices = userServices;
@@ -62,7 +63,6 @@ namespace ChatServer.Controllers
         [ProducesDefaultResponseType]
         public ActionResult GetProfile()
         {
-
             int userId = int.Parse(this.User.FindFirst("userId")?.Value ?? "0");
 
             if (userId == 0)
@@ -74,8 +74,42 @@ namespace ChatServer.Controllers
             {
                 return NotFound(new DefaultResponse { Message = "User Not Found" });
             }
-			
+
             return Ok(new DefaultResponse { Message = "Success", Data = user });
         }
+
+        [HttpGet]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public ActionResult GetUser()
+        {
+            int userId = int.Parse(this.User.FindFirst("userId")?.Value ?? "0");
+            var user = _userServices.GetUsers(userId);
+            if (user == null)
+            {
+                return NotFound(new DefaultResponse { Message = "User Not Found" });
+            }
+
+            return Ok(new DefaultResponse { Message = "Success", Data = user });
+        }
+
+        [HttpGet]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public ActionResult GetUserById(int id)
+        {
+            var user = _userServices.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound(new DefaultResponse { Message = "User Not Found" });
+            }
+
+            return Ok(new DefaultResponse { Message = "Success", Data = user });
+        }
+
     }
 }

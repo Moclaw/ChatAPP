@@ -100,11 +100,6 @@ namespace ChatServer.Data
                     .HasColumnType("text")
                     .HasColumnName("content");
 
-                entity.Property(e => e.ReceiverStatus)
-                    .HasMaxLength(255)
-                    .IsUnicode(false)
-                    .HasColumnName("receiver_status");
-
                 entity.Property(e => e.SendTime)
                     .HasColumnType("datetime")
                     .HasColumnName("send_time");

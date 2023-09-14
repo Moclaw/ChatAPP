@@ -1,0 +1,28 @@
+
+{
+    "region" : "us-east-1",
+    "profile" : "default",
+    "configuration" : "Release",
+    "image-tag"     : "chatserver:latest",
+    "docker-build-working-dir" : "",
+    "cluster"                  : "ChatServer",
+    "launch-type"              : "FARGATE",
+    "launch-subnets"           : "subnet-09fdeb1677bdb951f,subnet-04f42fe514e912650,subnet-02a68d25e7b8a76df,subnet-0e43a30f886aceddb,subnet-0d56eefa3d73beb4a,subnet-064fe1fc01728b5f3",
+    "launch-security-groups"   : "sg-0c890785dcd90a911",
+    "assign-public-ip"         : true,
+    "task-definition-name"     : "ChatServerRecipeAppTaskDefinition83B60A7C",
+    "task-cpu"                 : "256",
+    "task-memory"              : "512",
+    "platform-version"         : "LATEST",
+    "task-definition-task-role" : "arn:aws:iam::984991676850:role/ChatServer-RecipeAppIAMTaskRole35276CAE-NN01EQC3TR4N",
+    "task-execution-role"       : "ChatServer-RecipeAppTaskDefinitionExecutionRole3EC-WNKJGKHWK36T",
+    "container-name"            : "AppContainerDefinition",
+    "container-port-mapping"    : "80:80",
+    "container-environment-variables" : "",
+    "skip-image-push"                 : false,
+    "cluster-service"                 : "ChatServer/ChatServer-service",
+    "desired-count"                   : 3,
+    "deployment-minimum-healthy-percent" : 50,
+    "deployment-maximum-percent"         : 200,
+    "vstoolkit-deployment-mode"          : "DeployService"
+}

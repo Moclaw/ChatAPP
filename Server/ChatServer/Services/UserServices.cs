@@ -83,6 +83,33 @@ namespace ChatServer.Services
             }
         }
 
+        public DefaultResponse GetUsers(int userId)
+        {
+            try
+            {
+                var users = _context.Users
+                    .Include(x => x.ChannelMemberships)
+                    .Include(x => x.File)
+                    .Include(x => x.Notifications)
+                    .ThenInclude(x => x.Message)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Username,
+                    }).Where(c => c.Id != userId).ToList();
+                return new DefaultResponse
+                {
+                    Message = "Get users success",
+                    Data = users
+                };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return new DefaultResponse { Message = "Get users failed" };
+            }
+        }
+
         public object? GetProfile(int userId)
         {
             try
@@ -152,6 +179,27 @@ namespace ChatServer.Services
             {
                 _logger.LogError(e?.Message);
                 return null;
+            }
+        }
+
+        public DefaultResponse GetUserById(int userId)
+        {
+            try
+            {
+                var user = _context.Users.Where(x => x.Id == userId)
+                    .Include(x => x.File)
+                    .FirstOrDefault();
+                if (user == null)
+                {
+                    return new DefaultResponse { Message = "User not found" };
+                }
+
+                return new DefaultResponse { Message = "Get user success", Data = user };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return new DefaultResponse { Message = "Get profile failed" };
             }
         }
 

@@ -13,7 +13,6 @@ namespace ChatServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-
     public class NotificationController : ControllerBase
     {
         private readonly NotificationServices _notificationServices;
@@ -28,13 +27,13 @@ namespace ChatServer.Controllers
         [ProducesDefaultResponseType]
         public ActionResult GetNotifications()
         {
-            int userId = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
+            int userId = int.Parse(this.User.Claims.FirstOrDefault(c => c.Type == "userId")!.Value);
             var result = _notificationServices.GetNotifications(userId);
             if (result == null)
             {
                 return BadRequest(new DefaultResponse { Message = "Get notifications failed" });
             }
-            return Ok(new DefaultResponse { Message = "Get notifications success", Data = result });
+            return Ok(new DefaultResponse { Message = "Get notifications success", Data = result, Count = result.Count });
         }
 
         [HttpPost("{id}")]

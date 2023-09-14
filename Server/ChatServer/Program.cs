@@ -12,14 +12,17 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+#pragma warning disable ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
+var _logger = builder.Services?.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+#pragma warning restore ASP0000 // Do not call 'IServiceCollection.BuildServiceProvider' in 'ConfigureServices'
 // Add builder.Services to the container.
 
-builder.Services.AddControllers();
+builder.Services!.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+builder.Services!.AddEndpointsApiExplorer();
 
 //config swagger
-builder.Services.AddSwaggerGen(setup =>
+builder.Services!.AddSwaggerGen(setup =>
 {
     var jwtSecurityScheme = new OpenApiSecurityScheme
     {
@@ -43,53 +46,56 @@ builder.Services.AddSwaggerGen(setup =>
     });
 });
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services!.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 //config dbcontext
-builder.Services.AddDbContext<ChatAPPContext>(options =>
+builder.Services!.AddDbContext<ChatAPPContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DatabaseAWS")));
 
 //config kafka
-builder.Services.AddHostedService<ConsumerService>();
+builder.Services!.AddHostedService<ConsumerService>();
 
-builder.Services.AddSingleton<ProducerConfig>(sp =>
-{
-    var config = new ProducerConfig
-    {
-        BootstrapServers = configuration["Kafka:BootstrapServers"],
-		Debug = "all"
-    };
-
-    return config;
-});
-builder.Services.AddSingleton<ConsumerConfig>(sp =>
+builder.Services!.AddSingleton<IConsumer<Ignore, string>>(sp =>
 {
     var config = new ConsumerConfig
     {
-        BootstrapServers = configuration["Kafka:BootstrapServers"],
-        ClientId = configuration["Kafka:ClientId"],
-        GroupId = configuration["Kafka:GroupId"],
-        AutoOffsetReset = AutoOffsetReset.Earliest,
-        SocketTimeoutMs = 5000,
-		EnableAutoCommit = true,
-		EnableAutoOffsetStore = true,
-		EnablePartitionEof = true,
-		AutoCommitIntervalMs = 5000,
-		StatisticsIntervalMs = 60000,
-		Debug = "all",
+        BootstrapServers = builder.Configuration["Kafka:BootstrapServers"],
+        GroupId = "chat-consumer",
+        AutoOffsetReset = AutoOffsetReset.Latest,
+        EnableAutoCommit = true
     };
+    return new ConsumerBuilder<Ignore, string>(config)
+     .SetPartitionsAssignedHandler((c, partitions) =>
+     {
+         _logger!.LogInformation($"Assigned partitions: [{string.Join(", ", partitions)}]");
+         return partitions.Select(tp => new TopicPartitionOffset(tp, Offset.Beginning)).ToList();
+     })
+                .SetPartitionsRevokedHandler((c, partitions) =>
+                {
+                    _logger!.LogInformation($"Revoking assignment: [{string.Join(", ", partitions)}]");
+                })
+                .SetErrorHandler((_, e) => _logger!.LogError($"Error: {e.Reason}"))
+                .SetValueDeserializer(Deserializers.Utf8)
+    .Build();
+});
 
-    return config;
+builder.Services!.AddSingleton<IProducer<string, string>>(sp =>
+{
+    var config = new ProducerConfig
+    {
+        BootstrapServers = builder.Configuration["Kafka:BootstrapServers"]
+    };
+    return new ProducerBuilder<string, string>(config).Build();
 });
 
 //config signalr
-builder.Services.AddSignalR();
+builder.Services!.AddSignalR();
 
 //config authentication
-builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services!.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
+builder.Services!.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 var signingKey = Convert.FromBase64String(configuration["Jwt:SignKey"]);
@@ -125,26 +131,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
             });
 
-builder.Services.AddAuthorization(options =>
+builder.Services!.AddAuthorization(options =>
 {
     var policy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
     policy = policy.RequireAuthenticatedUser();
     options.DefaultPolicy = policy.Build();
 });
 
-builder.Services.AddCors(options =>
+builder.Services!.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("CorsPolicy", builder =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder
+            .WithOrigins("http://localhost:4200") // Replace with the actual origin of your Angular app
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials(); // Enable credentials (cookies) if needed
     });
 });
 
-
 // Add services 
-builder.Services.AddSignalR(options =>
+builder.Services!.AddSignalR(options =>
 {
     options.EnableDetailedErrors = true;
     options.MaximumReceiveMessageSize = 102400000;
@@ -154,10 +161,14 @@ builder.Services.AddSignalR(options =>
 }
 );
 
-builder.Services.AddSingleton<ChatHub>();
+builder.Services!.AddSingleton<ChatHub>();
 
-builder.Services.AddScoped<UserServices>();
-builder.Services.AddScoped<ChannelServices>();
+builder.Services!.AddScoped<UserServices>();
+builder.Services!.AddScoped<ChannelServices>();
+builder.Services!.AddScoped<NotificationServices>();
+builder.Services!.AddSingleton<ConsumerService>();
+builder.Services!.AddScoped<AwsSNSServices>();
+builder.Services!.AddHostedService<AwsSNSServices>();
 
 
 var app = builder.Build();
@@ -169,7 +180,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -177,7 +188,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute();
     endpoints.MapControllers();
-    endpoints.MapHub<ChatHub>("/hubs/chat");
+    endpoints.MapHub<ChatHub>("/channels");
 });
 
 

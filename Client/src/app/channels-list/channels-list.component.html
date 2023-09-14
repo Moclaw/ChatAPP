@@ -1,0 +1,50 @@
+<div class="banner">
+	<div class="button">
+		<!-- create chat button if click button will show a popup -->
+		<button class="btn btn-primary create" (click)="showPopup()" *ngIf="!isCreate&&!isShowMessages">Create
+			Chat</button>
+		<!-- popup -->
+		<div class=" popup" *ngIf="isCreate">
+			<form (ngSubmit)="onSubmit()">
+
+				<div>
+					<mat-form-field>
+						<mat-label>Channel Name</mat-label>
+						<input matInput placeholder="Name" [formControl]="name">
+					</mat-form-field>
+				</div>
+				<mat-form-field>
+					<mat-label>Add User</mat-label>
+					<mat-select [formControl]="userSelect" multiple>
+						<mat-option *ngFor="let user of users" [value]="user.id">{{user.username}}</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<button mat-raised-button color="primary" type="submit" class="btn btn-primary">Create</button>
+				<button mat-raised-button color="accent" (click)="closePopup()">Close</button>
+			</form>
+		</div>
+	</div>
+	<div class="container">
+		<div style="display: flex;">
+			<ul class="table" *ngIf="!isShowMessages">
+				<li *ngFor="let channel of channels">
+					<div class="channel-item" (click)="showMessages(channel)">
+						<div class="name">
+							{{channel.name}}
+						</div>
+					</div>
+					<div>
+						<button (click)="deleteChannel(channel.id)" mat-raised-button color="accent">Del</button>
+					</div>
+				</li>
+			</ul>
+			<div *ngIf="!channels?.length" class="no-data">
+				No Data
+			</div>
+		</div>
+		<div class="message" *ngIf="isShowMessages">
+			<button (click)="closeMessages()" class="btn btn-danger close">Close</button>
+			<app-message [channelId]="channelId"></app-message>
+		</div>
+	</div>
+</div>

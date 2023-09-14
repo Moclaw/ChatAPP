@@ -15,7 +15,6 @@ namespace ChatServer.Models.Entities
         public string? Type { get; set; }
         public int? UserId { get; set; }
         public string? SenderStatus { get; set; }
-        public string? ReceiverStatus { get; set; }
         public DateTime? SendTime { get; set; }
         public int? ChannelId { get; set; }
 
@@ -30,14 +29,15 @@ namespace ChatServer.Models.Entities
     public enum SenderStatusEnum
     {
         Sent = 1,
-        Typing = 2,
-        Delivery = 3
+        Delivery = 3,
+        Seen = 2
     }
 
     public enum ReceiverStatusEnum
     {
         Received = 1,
-        Seen = 2
+        NotReceived = 2,
+        Seen = 3
     }
 
     public enum MessageTypeEnum

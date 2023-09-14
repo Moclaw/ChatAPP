@@ -1,0 +1,38 @@
+<div class="container">
+	<div class="channel">
+		<div class="name" style="font-size: large; font-weight: bolder">
+			{{channel?.name}}
+		</div>
+		<div class="member">
+			<ul>
+				<div class="user-name">
+					{{name}}
+				</div>
+			</ul>
+		</div>
+	</div>
+	<div class="mess" #messageContainer>
+		<div class="message-list" #messageList>
+			<div *ngFor="let mess of messages" class="message"
+				[ngClass]="{'sender-message': mess.userId == userId, 'receiver-message': mess.userId != userId}">
+				<div class="mess-content">
+					<p>{{mess.content}}</p>
+				</div>
+				<div class="mess-info">
+					<p>
+						{{mess.createdAt}} by
+						<span>{{mess.userId == userId ? 'Bạn' : mess.username}}</span>
+					</p>
+					<!-- status -->
+					<div class="status">
+						{{mess.senderStatus }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="input">
+		<textarea [(ngModel)]="content" placeholder="Nhập tin nhắn của bạn..."></textarea>
+		<button (click)="sendMessage()">Gửi</button>
+	</div>
+</div>

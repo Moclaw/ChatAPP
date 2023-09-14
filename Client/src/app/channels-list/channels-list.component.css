@@ -1,0 +1,132 @@
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "~@ng-select/ng-select/themes/material.theme.css";
+
+/* css  */
+.snackbar {
+	text-align: center;
+}
+
+.container {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	box-shadow: inset;
+	width: 100%;
+	max-height: 50%;
+	display: flex;
+	overflow: hidden;
+}
+
+ul {
+	list-style-type: none;
+	margin: 50px;
+	padding: 0;
+	overflow: hidden;
+}
+
+.message {
+	overflow: hidden;
+}
+
+.channel-item {
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	float: left;
+	width: 150px;
+	height: 50px;
+	box-shadow: 0 0 10px #ccc;
+}
+
+.table {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	box-shadow: inset;
+}
+
+.name {
+	width: 100px;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	margin: auto;
+}
+
+.banner {
+	display: flex;
+	overflow: hidden;
+}
+
+
+.table {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	box-shadow: inset;
+	max-width: 100%;
+	max-height: calc(100vh - 200px);
+	overflow: auto;
+}
+
+.button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 20px;
+	margin-right: auto;
+	margin-left: 10px !important;
+}
+
+::ng-deep.ng-select-container {
+	border-bottom: 1px solid red !important;
+}
+
+/* clear placeholder when have item select */
+::ng-deep.ng-select-container.ng-has-value .ng-value-container .ng-input>input {
+	height: 0;
+	width: 0;
+}
+
+.select {
+	margin-bottom: 10em;
+}
+
+.ng-select.custom {
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+
+.message {
+	overflow: hidden;
+	width: 100%;
+}
+
+.selected {
+	background-color: #0099ff;
+	color: #fff;
+}
+
+.selected-channel {
+	background-color: #0099ff;
+	/* Chọn màu nền mong muốn */
+	color: #fff;
+	/* Chọn màu chữ mong muốn */
+}
+
+.unread {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 10px;
+	height: 10px;
+	background-color: red;
+	border-radius: 50%;
+}
+
+.popup {
+	display: inline;
+	margin: 50px;
+}
+
+.popup .button {
+	display: block;
+	grid-row: 1;
+}

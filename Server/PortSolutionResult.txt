@@ -1,0 +1,143 @@
+==========
+References
+==========
+ChatServer.Controllers
+Microsoft.AspNetCore.Mvc
+ChatServer.Services
+Microsoft.AspNetCore.Authorization
+Microsoft.AspNetCore.Http
+ChatServer.Models.PostModels
+<global namespace>
+System
+System.Security.Claims
+System.Collections.Generic
+System.Linq
+ChatServer.Models.DTO
+ChatServer.Data
+Microsoft.EntityFrameworkCore
+ChatServer.Models.Entities
+Microsoft.EntityFrameworkCore.Metadata.Builders
+ChatServer.Hubs
+Microsoft.AspNetCore.SignalR
+Confluent.Kafka
+Microsoft.Extensions.DependencyInjection
+System.Threading.Tasks
+System.Diagnostics
+Newtonsoft.Json
+ChatServer.Migrations
+Microsoft.EntityFrameworkCore.Migrations
+Microsoft.EntityFrameworkCore.Migrations.Operations.Builders
+Microsoft.EntityFrameworkCore.Infrastructure
+Amazon.SimpleNotificationService
+Amazon.SimpleNotificationService.Model
+Amazon.Runtime
+Microsoft.Extensions.Configuration
+Confluent.Kafka.Admin
+Microsoft.Extensions.Logging
+System.Runtime.CompilerServices
+Microsoft.Extensions.Hosting
+System.Threading
+System.Text
+System.Security.Cryptography
+System.IO
+System.IdentityModel.Tokens.Jwt
+Microsoft.IdentityModel.Tokens
+Microsoft.EntityFrameworkCore.Metadata
+Microsoft.EntityFrameworkCore.Storage.ValueConversion
+Amazon.SSO
+Microsoft.AspNetCore.Authentication.JwtBearer
+Microsoft.OpenApi.Models
+System.Text.Json.Serialization
+System.Text.Json
+System.Net.WebSockets
+global::Microsoft.AspNetCore.Builder
+global::Microsoft.AspNetCore.Hosting
+global::Microsoft.AspNetCore.Http
+global::Microsoft.AspNetCore.Routing
+global::Microsoft.Extensions.Configuration
+global::Microsoft.Extensions.DependencyInjection
+global::Microsoft.Extensions.Hosting
+global::Microsoft.Extensions.Logging
+global::System
+global::System.Collections.Generic
+global::System.IO
+global::System.Linq
+global::System.Net.Http
+global::System.Net.Http.Json
+global::System.Threading
+global::System.Threading.Tasks
+System.Reflection
+project.all
+
+===============
+DownloadedFiles
+===============
+project.all.json
+
+==============
+ProjectResults
+==============
+----------------------
+Showing results for: D:\GitHubs\Server\ChatServer\ChatServer.csproj
+----------------------
+---------------------------
+Target Versions:
+---------------------------
+net6.0
+---------------------------
+Source Versions:
+---------------------------
+net48
+---------------------------
+Upgrade packages:
+---------------------------
+---------------------------
+Action packages:
+---------------------------
+---------------------------
+Executed Actions for file: Project
+---------------------------
+
+Action Type: ProjectFile
+Action Name: MigrateProjectFile
+Action Value: 
+Times Run: 1
+Executions With Error: 0
+Invalid Executions: 0
+
+
+----------------------
+Showing results for: D:\GitHubs\Server\ChatServer\ChatServer.csproj
+----------------------
+---------------------------
+Target Versions:
+---------------------------
+net6.0
+---------------------------
+Source Versions:
+---------------------------
+net48
+---------------------------
+Upgrade packages:
+---------------------------
+---------------------------
+Action packages:
+---------------------------
+---------------------------
+Executed Actions for file: Project
+---------------------------
+
+Action Type: ProjectFile
+Action Name: MigrateProjectFile
+Action Value: 
+Times Run: 1
+Executions With Error: 0
+Invalid Executions: 0
+
+
+
+===========
+BuildErrors
+===========
+
+
